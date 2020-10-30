@@ -1,27 +1,61 @@
 package com.wcc.supertrunfo
 
+import com.wcc.supertrunfo.entities.Driver
+import com.wcc.supertrunfo.entities.Player
+import com.wcc.supertrunfo.entities.Vehicle
+
 data class Card2 (
         val vehicle: Vehicle,
         val driver: Driver,
-        val player: Player
+        private val player: Player
 ) {
     val label: String = "Card ${player.name}"
-    val maxVelocity = setMaxVelocity()
-    val accelerationTime = setAccelerationTime()
-    val passengers = serPassengers()
+    val maxVelocity = initMaxVelocity()
+    val accelerationTime = vehicle.accelerationTime
+    val passengers = initPassengers()
+    val xP = initXP()
 
-    //(currentVehiclePlayerOne["passengers"]?.toInt()
-    //?: 0) * (1 + (currentDriverPlayerOne["defensiveDriving"]?.toInt() ?: 0))
 
-    private fun serPassengers(): Int {
+
+    private fun initPassengers(): Int {
         return vehicle.passengers * (1 + driver.defensiveDriving)
     }
 
-    private fun setAccelerationTime(): Int {
+    private fun initAccelerationTime(): Int {
         TODO( "Not yet implemented")
     }
 
-    private fun setMaxVelocity(): Int {
-        return 0
+    private fun initMaxVelocity(): Int {
+       return when( vehicle.type){
+                "car" -> maxCarVelocity()
+                "motorcycle" -> maxMotorcycleVelocity()
+                else  -> maxVelocityBike()
+        }
     }
+
+    private fun maxVelocityBike(): Int {
+        return vehicle.maxAcceleration * driver.boldness
+    }
+
+    private fun maxMotorcycleVelocity(): Int {
+        return 1 / vehicle.weight * vehicle.maxAcceleration
+
+    }
+
+    private fun initXP(): Int {
+         return when (vehicle.type) {
+            "car" -> driver.carXP
+            "motorcycle" -> driver.motorcycleXP
+            else -> driver.bikeXP
+        }
+    }
+
+    private fun maxCarVelocity(): Int{
+        return if(vehicle.style == "sedã"){
+            vehicle.maxAcceleration
+        }else {
+            vehicle.maxAcceleration + 10
+        }
+    }
+
 }
